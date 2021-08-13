@@ -1,7 +1,9 @@
 package com.kevin.guavalimit.controller;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.kevin.guavalimit.service.LimitService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class LimitController {
 
     private RateLimiter rateLimiter = RateLimiter.create(10);
+
+    @Autowired
+    private LimitService limitService;
 
     /**
      * 创建放两个令牌的捅，且每秒放2个令牌 0.5秒放一个
@@ -35,5 +40,12 @@ public class LimitController {
         }else {
             log.info("手慢了，没抢到货物");
         }
+    }
+
+
+    @GetMapping(value = "/sentinel")
+    public String sentinel(){
+        limitService.process();
+        return "sentinel";
     }
 }
